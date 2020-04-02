@@ -10,4 +10,7 @@ _Authors:_
 
 ## Visuals
 
+#### AsyncInn ERD Image
+![AsyncInn ERD](/Assets/Images/AsyncInnERD.png)
+
 ## Change Log
