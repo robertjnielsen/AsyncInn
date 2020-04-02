@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace AsyncInn.Data
 {
-    public class StudenEnrollmentDbContext : DbContext
+    public class AsyncInnDbContext : DbContext
     {
-        public StudenEnrollmentDbContext(DbContextOptions<StudenEnrollmentDbContext> options) : base(options)
+        public AsyncInnDbContext(DbContextOptions<AsyncInnDbContext> options) : base(options)
         {
             
         }
