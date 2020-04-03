@@ -4,6 +4,13 @@ _Authors:_
 - [Harlen Lopez](https://github.com/harlenlopez)
 - [Robert James Nielsen](https://github.com/robertjnielsen)
 
+## Table Of Contents
+I. [Overview](#overview)
+II. [Tools Used](#tools-used)
+III. [Getting Started](#getting-started)
+IV. [Visuals](#visuals)
+V. [Change Log](#change-log)
+
 ## Overview
 
 #### Problem Domain
