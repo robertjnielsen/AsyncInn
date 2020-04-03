@@ -11,6 +11,10 @@ namespace AsyncInn.Data
 {
     public class AsyncInnDbContext : DbContext
     {
+        /// <summary>
+        /// DBContext constructor method.
+        /// </summary>
+        /// <param name="options">Options passed to the constructor.</param>
         public AsyncInnDbContext(DbContextOptions<AsyncInnDbContext> options) : base(options)
         {
             
