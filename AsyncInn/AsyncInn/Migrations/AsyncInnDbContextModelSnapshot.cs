@@ -31,6 +31,33 @@ namespace AsyncInn.Migrations
                     b.HasKey("ID");
 
                     b.ToTable("Amenities");
+
+                    b.HasData(
+                        new
+                        {
+                            ID = 1,
+                            Name = "Looking Glass"
+                        },
+                        new
+                        {
+                            ID = 2,
+                            Name = "Painted Rose"
+                        },
+                        new
+                        {
+                            ID = 3,
+                            Name = "Mushroom"
+                        },
+                        new
+                        {
+                            ID = 4,
+                            Name = "Tea Party"
+                        },
+                        new
+                        {
+                            ID = 5,
+                            Name = "Unbirthday"
+                        });
                 });
 
             modelBuilder.Entity("AsyncInn.Models.Hotel", b =>
@@ -58,6 +85,53 @@ namespace AsyncInn.Migrations
                     b.HasKey("ID");
 
                     b.ToTable("Hotels");
+
+                    b.HasData(
+                        new
+                        {
+                            ID = 1,
+                            City = "Alabama",
+                            Name = "The Wyatt",
+                            Phone = "(555) 867-5309",
+                            State = "Alabama",
+                            StreetAddress = "123 Fake Street"
+                        },
+                        new
+                        {
+                            ID = 2,
+                            City = "Los Angeles",
+                            Name = "Murder House",
+                            Phone = "(666) 666-6660",
+                            State = "Alabama",
+                            StreetAddress = "Cutthroat Lane"
+                        },
+                        new
+                        {
+                            ID = 3,
+                            City = "Carson",
+                            Name = "Bunny Ranch",
+                            Phone = "(069) 069-6969",
+                            State = "Nevada",
+                            StreetAddress = "69 Moonlight Road"
+                        },
+                        new
+                        {
+                            ID = 4,
+                            City = "New York City",
+                            Name = "Dolphin Hotel",
+                            Phone = "(666) 666-1408",
+                            State = "New York",
+                            StreetAddress = "666 Devils Court"
+                        },
+                        new
+                        {
+                            ID = 5,
+                            City = "Black Hole",
+                            Name = "Hotel California",
+                            Phone = "(000) 000-0000",
+                            State = "California",
+                            StreetAddress = "420 Neverending Avenue"
+                        });
                 });
 
             modelBuilder.Entity("AsyncInn.Models.HotelRoom", b =>
@@ -100,6 +174,44 @@ namespace AsyncInn.Migrations
                     b.HasKey("ID");
 
                     b.ToTable("Rooms");
+
+                    b.HasData(
+                        new
+                        {
+                            ID = 1,
+                            Layout = 0,
+                            Name = "Frabjous Day"
+                        },
+                        new
+                        {
+                            ID = 2,
+                            Layout = 1,
+                            Name = "Horunvendush Day"
+                        },
+                        new
+                        {
+                            ID = 3,
+                            Layout = 0,
+                            Name = "Toomalie Day"
+                        },
+                        new
+                        {
+                            ID = 4,
+                            Layout = 2,
+                            Name = "Griblig Day"
+                        },
+                        new
+                        {
+                            ID = 5,
+                            Layout = 2,
+                            Name = "Kebek Day"
+                        },
+                        new
+                        {
+                            ID = 6,
+                            Layout = 1,
+                            Name = "Faldifal Day"
+                        });
                 });
 
             modelBuilder.Entity("AsyncInn.Models.RoomAmenities", b =>
