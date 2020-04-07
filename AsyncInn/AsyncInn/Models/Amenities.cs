@@ -22,7 +22,7 @@ namespace AsyncInn.Models
         /// <summary>
         /// List of RoomAmenities objects.
         /// </summary>
-        public List<RoomAmenities> RoomAmenities { get; set; }
+        public RoomAmenities RoomAmenities { get; set; }
 
     }
 }

@@ -33,7 +33,7 @@ namespace AsyncInn.Models
         public bool PetFriendly { get; set; }
 
         //Navigation Properties
-        public List<Hotel> Hotels { get; set; }
-        public List<Room> Rooms { get; set; }
+        public Hotel Hotel { get; set; }
+        public Room Room { get; set; }
     }
 }

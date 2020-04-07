@@ -21,6 +21,11 @@ namespace AsyncInn.Models
         /// Layout of Room object.
         /// </summary>
         public int Layout { get; set; }
+
+        // Navigation Properties
+        public List<RoomAmenities> RoomAmenities { get; set; }
+
+        public List<HotelRoom> HotelRooms { get; set; }
     }
 
     /// <summary>
