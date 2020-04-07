@@ -75,6 +75,18 @@ dotnet run
 
 ## Change Log
 
+**1.4** - 20200406
+- Documentation complete to current version.
+- Updated DB.
+- Created seed migration.
+- Created seed data.
+
+**1.3** - 20200406
+- Documentation complete to current version.
+- Updated DB.
+- Created migration for new entities.
+- Created DB entities.
+
 **1.2** - 20200401
 - Documentation complete to current version.
 - DB updated.
