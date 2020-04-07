@@ -75,6 +75,11 @@ dotnet run
 
 ## Change Log
 
+**1.5** - 20200406
+- Documentation complete to current version.
+- Configured application to use User Secrets file for configuration settings.
+- API Controllers created for entities.
+
 **1.4** - 20200406
 - Documentation complete to current version.
 - Updated DB.
