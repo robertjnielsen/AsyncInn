@@ -19,7 +19,7 @@ namespace AsyncInn.Models
 
         // Navigation Properties
 
-        public List<Room> Rooms { get; set; }
-        public List<Amenities> Amenities { get; set; }
+        public Room Room { get; set; }
+        public Amenities Amenities { get; set; }
     }
 }
