@@ -19,9 +19,14 @@ namespace AsyncInn
         public IConfiguration Configuration { get; }
 
         // Ctor to enable DI for config file with Configuration prop.
-        public Startup(IConfiguration configuration)
+        public Startup()
         {
-            Configuration = configuration;
+            var builder = new ConfigurationBuilder()
+                .AddEnvironmentVariables();
+
+            builder.AddUserSecrets<Startup>();
+
+            Configuration = builder.Build();
         }
         
         public void ConfigureServices(IServiceCollection services)
