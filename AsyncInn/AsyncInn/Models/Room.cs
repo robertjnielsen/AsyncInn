@@ -20,7 +20,7 @@ namespace AsyncInn.Models
         /// <summary>
         /// Layout of Room object.
         /// </summary>
-        public int Layout { get; set; }
+        public Layout Layout { get; set; }
 
         // Navigation Properties
         public List<RoomAmenities> RoomAmenities { get; set; }
