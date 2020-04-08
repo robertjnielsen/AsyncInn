@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using AsyncInn.Data;
 using AsyncInn.Models;
+using AsyncInn.Models.Interfaces;
 
 namespace AsyncInn.Controllers
 {
@@ -14,32 +15,26 @@ namespace AsyncInn.Controllers
     [ApiController]
     public class HotelsController : ControllerBase
     {
-        private readonly AsyncInnDbContext _context;
+        private readonly IHotelManager _hotel;
 
-        public HotelsController(AsyncInnDbContext context)
+        public HotelsController(IHotelManager hotel)
         {
-            _context = context;
+            _hotel = hotel;
         }
 
         // GET: api/Hotels
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Hotel>>> GetHotels()
         {
-            return await _context.Hotels.ToListAsync();
+            return await _hotel.GetAllHotels();
         }
 
-        // GET: api/Hotels/5
+        /*// GET: api/Hotels/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Hotel>> GetHotel(int id)
         {
-            var hotel = await _context.Hotels.FindAsync(id);
-
-            if (hotel == null)
-            {
-                return NotFound();
-            }
-
-            return hotel;
+            
+            return null;
         }
 
         // PUT: api/Hotels/5
@@ -48,12 +43,12 @@ namespace AsyncInn.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutHotel(int id, Hotel hotel)
         {
-            if (id != hotel.ID)
+*//*            if (id != hotel.ID)
             {
                 return BadRequest();
             }
 
-            _context.Entry(hotel).State = EntityState.Modified;
+            _hotel.Entry(hotel).State = EntityState.Modified;
 
             try
             {
@@ -69,7 +64,7 @@ namespace AsyncInn.Controllers
                 {
                     throw;
                 }
-            }
+            }*//*
 
             return NoContent();
         }
@@ -105,6 +100,6 @@ namespace AsyncInn.Controllers
         private bool HotelExists(int id)
         {
             return _context.Hotels.Any(e => e.ID == id);
-        }
+        }*/
     }
 }
