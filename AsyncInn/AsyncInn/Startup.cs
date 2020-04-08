@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AsyncInn.Data;
+using AsyncInn.Models.Interfaces;
+using AsyncInn.Models.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -21,8 +23,7 @@ namespace AsyncInn
         // Ctor to enable DI for config file with Configuration prop.
         public Startup()
         {
-            var builder = new ConfigurationBuilder()
-                .AddEnvironmentVariables();
+            var builder = new ConfigurationBuilder().AddEnvironmentVariables();
 
             builder.AddUserSecrets<Startup>();
 
@@ -37,6 +38,9 @@ namespace AsyncInn
             // Tell our app to use our default connection string from app settings file.
             services.AddDbContext<AsyncInnDbContext>(options => 
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+
+            // Dependency Injection Mappings
+            services.AddTransient<IHotelManager, HotelService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
