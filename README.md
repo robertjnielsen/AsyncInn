@@ -75,6 +75,11 @@ dotnet run
 
 ## Change Log
 
+**1.6** - 20200408
+- Created interface and service for Amenities with dependency injection.
+- Created interface and service for Rooms with dependency injection.
+- Created interface and service for Hotels with dependency injection.
+
 **1.5** - 20200406
 - Documentation complete to current version.
 - Configured application to use User Secrets file for configuration settings.
