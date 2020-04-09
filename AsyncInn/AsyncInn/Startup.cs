@@ -41,6 +41,8 @@ namespace AsyncInn
 
             // Dependency Injection Mappings
             services.AddTransient<IHotelManager, HotelService>();
+            services.AddTransient<IRoomManager, RoomService>();
+            services.AddTransient<IAmenitiesManager, AmenitiesService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

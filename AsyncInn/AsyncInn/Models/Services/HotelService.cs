@@ -10,35 +10,88 @@ namespace AsyncInn.Models.Services
 {
     public class HotelService : IHotelManager
     {
+        /// <summary>
+        /// The DBContext for the AsyncInn DB.
+        /// </summary>
         private AsyncInnDbContext _context;
 
+        /// <summary>
+        /// Constructor method for the service.
+        /// </summary>
+        /// <param name="context">The DBContext for the AsyncInn DB.</param>
         public HotelService(AsyncInnDbContext context)
         {
             _context = context;
         }
-        public Task<Hotel> CreateHotel(Hotel hotel)
+
+        /// <summary>
+        /// Insert a new Hotel object into the Hotels table.
+        /// </summary>
+        /// <param name="hotel">The data for the new Hotel object.</param>
+        /// <returns>The newly created Hotel object.</returns>
+        public async Task<Hotel> CreateHotel(Hotel hotel)
         {
-            throw new NotImplementedException();
+            // Adds the new Hotel to the DB.
+            _context.Hotels.Add(hotel);
+
+            // Saves the new Hotel in the DB.
+            await _context.SaveChangesAsync();
+
+            return hotel;
         }
 
+        /// <summary>
+        /// Retrieves all Hotel objects from the DB.
+        /// </summary>
+        /// <returns>A list of all Hotel objects.</returns>
         public async Task<List<Hotel>> GetAllHotels()
         {
             return await _context.Hotels.ToListAsync();
         }
 
-        public Task<Hotel> GetHotelByID(int HotelID)
+        /// <summary>
+        /// Retrieves a single Hotel object from the DB.
+        /// </summary>
+        /// <param name="HotelID">The ID of the Hotel object to retrieve.</param>
+        /// <returns>A single Hotel object.</returns>
+        public async Task<Hotel> GetHotelByID(int HotelID)
         {
-            throw new NotImplementedException();
+            // Finds the Hotel object in the DB with a matching ID.
+            Hotel hotel = await _context.Hotels.FindAsync(HotelID);
+
+            return hotel;
         }
 
-        public Task RemoveHotel(int HotelID)
+        /// <summary>
+        /// Deletes a Hotel object from the DB.
+        /// </summary>
+        /// <param name="HotelID">The ID of the Hotel object to delete.</param>
+        /// <returns>Nothing.</returns>
+        public async Task RemoveHotel(int HotelID)
         {
-            throw new NotImplementedException();
+            // Find the Hotel with the matching ID.
+            Hotel hotel = await GetHotelByID(HotelID);
+
+            // Delete the Hotel from the DB.
+            _context.Hotels.Remove(hotel);
+
+            // Save the state of the DB.
+            await _context.SaveChangesAsync();
         }
 
-        public Task UpdateHotel(int HotelID, Hotel hotel)
+        /// <summary>
+        /// Update an existing Hotel object in the DB.
+        /// </summary>
+        /// <param name="HotelID">The ID of the Hotel object to update.</param>
+        /// <param name="hotel">The updated data for the Hotel object.</param>
+        /// <returns>Nothing.</returns>
+        public async Task UpdateHotel(int HotelID, Hotel hotel)
         {
-            throw new NotImplementedException();
+            // Modify the data in the existing Hotel object in the DB.
+            _context.Entry(hotel).State = EntityState.Modified;
+
+            // Save the state of the DB.
+            await _context.SaveChangesAsync();
         }
     }
 }
