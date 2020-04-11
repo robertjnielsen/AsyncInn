@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using AsyncInn.Data;
 using AsyncInn.Models;
+using AsyncInn.Models.Interfaces;
 
 namespace AsyncInn.Controllers
 {
@@ -14,9 +15,9 @@ namespace AsyncInn.Controllers
     [ApiController]
     public class HotelRoomsController : ControllerBase
     {
-        private readonly AsyncInnDbContext _context;
+        private readonly IHotelRoomManager _context;
 
-        public HotelRoomsController(AsyncInnDbContext context)
+        public HotelRoomsController(IHotelRoomManager context)
         {
             _context = context;
         }
@@ -25,14 +26,14 @@ namespace AsyncInn.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<HotelRoom>>> GetHotelRooms()
         {
-            return await _context.HotelRooms.ToListAsync();
+            return await _context.GetAllHotelRooms();
         }
 
         // GET: api/HotelRooms/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<HotelRoom>> GetHotelRoom(int id)
+        [HttpGet, Route("{hotelId}/{roomNumber}")]
+        public async Task<ActionResult<HotelRoom>> GetHotelRoom(int hotelId, int roomNumber)
         {
-            var hotelRoom = await _context.HotelRooms.FindAsync(id);
+            var hotelRoom = await _context.GetHotelRoomByRoomNumber(hotelId, roomNumber);
 
             if (hotelRoom == null)
             {
@@ -45,7 +46,7 @@ namespace AsyncInn.Controllers
         // PUT: api/HotelRooms/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
-        [HttpPut("{id}")]
+/*        [HttpPut("{id}")]
         public async Task<IActionResult> PutHotelRoom(int id, HotelRoom hotelRoom)
         {
             if (id != hotelRoom.HotelID)
@@ -74,34 +75,19 @@ namespace AsyncInn.Controllers
             return NoContent();
         }
 
-        // POST: api/HotelRooms
+*/        // POST: api/HotelRooms
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPost]
         public async Task<ActionResult<HotelRoom>> PostHotelRoom(HotelRoom hotelRoom)
         {
-            _context.HotelRooms.Add(hotelRoom);
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateException)
-            {
-                if (HotelRoomExists(hotelRoom.HotelID))
-                {
-                    return Conflict();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            await _context.CreateHotelRoom(hotelRoom);
 
             return CreatedAtAction("GetHotelRoom", new { id = hotelRoom.HotelID }, hotelRoom);
         }
 
         // DELETE: api/HotelRooms/5
-        [HttpDelete("{id}")]
+/*        [HttpDelete("{id}")]
         public async Task<ActionResult<HotelRoom>> DeleteHotelRoom(int id)
         {
             var hotelRoom = await _context.HotelRooms.FindAsync(id);
@@ -115,10 +101,6 @@ namespace AsyncInn.Controllers
 
             return hotelRoom;
         }
-
-        private bool HotelRoomExists(int id)
-        {
-            return _context.HotelRooms.Any(e => e.HotelID == id);
-        }
+*/
     }
 }

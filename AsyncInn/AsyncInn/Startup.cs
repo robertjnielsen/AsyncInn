@@ -43,6 +43,7 @@ namespace AsyncInn
             services.AddTransient<IHotelManager, HotelService>();
             services.AddTransient<IRoomManager, RoomService>();
             services.AddTransient<IAmenitiesManager, AmenitiesService>();
+            services.AddTransient<IHotelRoomManager, HotelRoomService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
