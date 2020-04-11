@@ -24,20 +24,19 @@ namespace AsyncInn.Models.Services
             return hotelRoom;
         }
 
-        public async Task<List<HotelRoom>> GetAllHotelRooms(int id, int roomNumber)
+        public async Task<List<HotelRoom>> GetAllHotelRooms()
         {
             var result = await _context.HotelRooms.ToListAsync();
             return result;
         }
 
-        public Task GetByRoomNumber(int HotelId, int RoomNumber)
-        {
-            throw new NotImplementedException();
-        }
+     
 
-        public Task<HotelRoom> GetHotelRoomByID(int HotelRoomID)
+        public async Task<HotelRoom> GetHotelRoomByRoomNumber(int roomNumber, int hotelId)
         {
-            throw new NotImplementedException();
+            var result = await _context.HotelRooms.Where(x => x.RoomNumber == roomNumber && x.HotelID == hotelId)
+                                                  .SingleAsync();
+            return result;
         }
 
         public Task RemoveHotelRoom(int HotelRoomID)
