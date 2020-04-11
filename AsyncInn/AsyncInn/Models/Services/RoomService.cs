@@ -16,12 +16,19 @@ namespace AsyncInn.Models.Services
         private AsyncInnDbContext _context;
 
         /// <summary>
+        /// Implements access to IAmenitiesManager interface within the RoomService service.
+        /// </summary>
+        private IAmenitiesManager _amenities;
+
+        /// <summary>
         /// Constructor method for the service.
         /// </summary>
         /// <param name="context">The DBContext for the AsyncInn DB.</param>
-        public RoomService(AsyncInnDbContext context)
+        /// <param name="amenities">The IAmenitiesManager interface to access Room Amenities.</param>
+        public RoomService(AsyncInnDbContext context, IAmenitiesManager amenities)
         {
             _context = context;
+            _amenities = amenities;
         }
 
         /// <summary>
@@ -58,6 +65,7 @@ namespace AsyncInn.Models.Services
         {
             // Finds the Room object in the DB with a matching ID.
             Room room = await _context.Rooms.FindAsync(roomID);
+            room.RoomAmenities = await GetRoomAmenities(roomID);
 
             return room;
         }
@@ -92,6 +100,15 @@ namespace AsyncInn.Models.Services
 
             // Save the state of the DB.
             await _context.SaveChangesAsync();
+        }
+
+        public async Task<List<RoomAmenities>> GetRoomAmenities(int id)
+        {
+            var result = await _context.RoomAmenities.Where(x => x.RoomID == id)
+                                        .Include(x => x.Amenities)
+                                        .ToListAsync();
+
+            return result;
         }
     }
 }
