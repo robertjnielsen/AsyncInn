@@ -64,7 +64,14 @@ namespace AsyncInn.Models.Services
         public async Task<Room> GetRoomByID(int roomID)
         {
             // Finds the Room object in the DB with a matching ID.
-            Room room = await _context.Rooms.FindAsync(roomID);
+            Room result = await _context.Rooms.FindAsync(roomID);
+            Room room = new Room()
+            {
+                ID = result.ID,
+                Name = result.Name,
+                Layout = result.Layout
+            };
+
             room.RoomAmenities = await GetRoomAmenities(roomID);
 
             return room;
