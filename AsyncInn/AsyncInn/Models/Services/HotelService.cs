@@ -58,6 +58,7 @@ namespace AsyncInn.Models.Services
         {
             // Finds the Hotel object in the DB with a matching ID.
             Hotel hotel = await _context.Hotels.FindAsync(HotelID);
+            hotel.HotelRooms = await GetHotelRooms(HotelID);
 
             return hotel;
         }
@@ -92,6 +93,16 @@ namespace AsyncInn.Models.Services
 
             // Save the state of the DB.
             await _context.SaveChangesAsync();
+        }
+        public async Task<List<HotelRoom>> GetHotelRooms(int HotelID)
+        {
+            var Result = await _context.HotelRooms.Where(x => x.HotelID == HotelID)
+                                                  .Include(x => x.Room)
+                                                  .ThenInclude(x => x.RoomAmenities)
+                                                  .ThenInclude(x => x.Amenities)
+                                                  .ToListAsync();
+            return Result;
+                
         }
     }
 }
