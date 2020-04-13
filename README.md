@@ -81,6 +81,9 @@ dotnet run
 
 ## Change Log
 
+**2.0** - 20200412
+- Completed CRUD operations for Amenities with DTOs.
+
 **1.9** - 20200412
 - Completed CRUD operations for Rooms with DTOs.
 
