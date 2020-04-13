@@ -39,14 +39,20 @@ namespace AsyncInn.Models.Services
             return result;
         }
 
-        public Task RemoveHotelRoom(int HotelRoomID)
+        public async Task RemoveHotelRoom(int HotelRoomID)
         {
-            throw new NotImplementedException();
+            var result = await _context.HotelRooms.Where(x => x.RoomNumber == HotelRoomID).SingleAsync();
+
+            _context.Remove(result);
+
+            await _context.SaveChangesAsync();
         }
 
-        public Task UpdateHotelRoom(int HotelRoomID, HotelRoom hotelRoom)
+        public async Task UpdateHotelRoom(int roomNumber, HotelRoom hotelRoom)
         {
-            throw new NotImplementedException();
+            _context.Update(hotelRoom);
+
+            await _context.SaveChangesAsync();
         }
     }
 }
