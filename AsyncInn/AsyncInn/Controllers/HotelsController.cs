@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using AsyncInn.Data;
 using AsyncInn.Models;
 using AsyncInn.Models.Interfaces;
+using AsyncInn.Models.DTO;
 
 namespace AsyncInn.Controllers
 {
@@ -18,15 +19,15 @@ namespace AsyncInn.Controllers
         /// <summary>
         /// Assigns the DB table / entity via IHotelManager and DI.
         /// </summary>
-        private readonly IHotelManager _hotel;
+        private readonly IHotelManager _hotels;
 
         /// <summary>
         /// Constructor method for the controller.
         /// </summary>
         /// <param name="hotel">The Hotels table / entity passed by IHotelManager.</param>
-        public HotelsController(IHotelManager hotel)
+        public HotelsController(IHotelManager hotels)
         {
-            _hotel = hotel;
+            _hotels = hotels;
         }
 
         /// <summary>
@@ -34,11 +35,11 @@ namespace AsyncInn.Controllers
         /// </summary>
         /// <param name="hotel">The Hotel object to insert into the table.</param>
         /// <returns>The newly created Hotel object.</returns>
-        // POST: api/Hotels
-        [HttpPost]
+        // POST: api/Hotels/new
+        [HttpPost, Route("new")]
         public async Task<ActionResult<Hotel>> PostHotel(Hotel hotel)
         {
-            var result = await _hotel.CreateHotel(hotel);
+            var result = await _hotels.CreateHotel(hotel);
 
             return CreatedAtAction("GetHotel", new { id = result.ID }, result);
         }
@@ -49,9 +50,9 @@ namespace AsyncInn.Controllers
         /// <returns>Returns a list of all Hotel objects.</returns>
         // GET: api/Hotels
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Hotel>>> GetHotels()
+        public async Task<ActionResult<IEnumerable<HotelDTO>>> GetHotels()
         {
-            return await _hotel.GetAllHotels();
+            return await _hotels.GetAllHotels();
         }
 
         /// <summary>
@@ -61,9 +62,9 @@ namespace AsyncInn.Controllers
         /// <returns>Returns a single Hotel object.</returns>
         // GET: api/Hotels/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Hotel>> GetHotel(int id)
+        public async Task<ActionResult<HotelDTO>> GetHotel(int id)
         {
-            var hotel = await _hotel.GetHotelByID(id);
+            var hotel = await _hotels.GetHotelByID(id);
 
             if (hotel == null)
             {
@@ -79,8 +80,8 @@ namespace AsyncInn.Controllers
         /// <param name="id">The ID of the Hotel to update.</param>
         /// <param name="hotel">The updated information for the Hotel.</param>
         /// <returns>Nothing.</returns>
-        // PUT: api/Hotels/5
-        [HttpPut("{id}")]
+        // PUT: api/Hotels/update/5
+        [HttpPut, Route("update/{id}")]
         public async Task<IActionResult> PutHotel(int id, Hotel hotel)
         {
            if (id != hotel.ID)
@@ -88,7 +89,7 @@ namespace AsyncInn.Controllers
                return BadRequest();
            }
 
-            await _hotel.UpdateHotel(id, hotel);
+            await _hotels.UpdateHotel(hotel);
 
             return NoContent();
         }
@@ -98,13 +99,39 @@ namespace AsyncInn.Controllers
         /// </summary>
         /// <param name="id">The ID of the Hotel to delete.</param>
         /// <returns>Nothing.</returns>
-        // DELETE: api/Hotels/5
-        [HttpDelete("{id}")]
+        // DELETE: api/Hotels/remove/5
+        [HttpDelete, Route("remove/{id}")]
         public async Task<ActionResult<Hotel>> DeleteHotel(int id)
         {
-            await _hotel.RemoveHotel(id);
+            if (! await HotelExists(id))
+            {
+                return NotFound();
+            }
+            else
+            {
+                await _hotels.RemoveHotel(id);
 
-            return NoContent();
+                return NoContent();
+            }
+        }
+
+        /// <summary>
+        /// Check if a Hotel object exists within the DB.
+        /// </summary>
+        /// <param name="id">The ID of the Hotel object to check for.</param>
+        /// <returns>A boolean value if the Hotel exists or not.</returns>
+        private async Task<bool> HotelExists(int id)
+        {
+            HotelDTO hotel = await _hotels.GetHotelByID(id);
+
+            if (hotel != null)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }
