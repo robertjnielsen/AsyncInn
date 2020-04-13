@@ -70,10 +70,21 @@ dotnet run
 
 ## Visuals
 
+#### API Calls With Postman
+
+![AsyncInn Running 1](/Assets/Images/AppRunning1.png)
+
+![AsyncInn Running 2](/Assets/Images/AppRunning2.png)
+
 #### AsyncInn ERD Image
 ![AsyncInn ERD](/Assets/Images/AsyncInnERD.png)
 
 ## Change Log
+
+**1.7** - 20200409
+- Tested data with Postman to make API calls.
+- Created interface and service for HotelRooms.
+- Created interface for RoomAmenities.
 
 **1.6** - 20200408
 - Created interface and service for Amenities with dependency injection.
