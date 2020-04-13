@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using AsyncInn.Data;
 using AsyncInn.Models;
 using AsyncInn.Models.Interfaces;
+using AsyncInn.Models.DTO;
 
 namespace AsyncInn.Controllers
 {
@@ -30,12 +31,26 @@ namespace AsyncInn.Controllers
         }
 
         /// <summary>
+        /// Adds a new Amenities object to the Amenities table / entity.
+        /// </summary>
+        /// <param name="amenities">The Amenities object to insert into the table.</param>
+        /// <returns>The newly created Amenities object.</returns>
+        // POST: api/Amenities/new
+        [HttpPost, Route("new")]
+        public async Task<ActionResult<AmenityDTO>> PostAmenities(Amenities amenities)
+        {
+            var result = await _amenities.CreateAmenities(amenities);
+
+            return CreatedAtAction("GetAmenities", new { id = result.ID }, result);
+        }
+
+        /// <summary>
         /// Gets all Amenities objects from the Amenities table.
         /// </summary>
         /// <returns>A list of all Amenities objects.</returns>
         // GET: api/Amenities
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Amenities>>> GetAmenities()
+        public async Task<ActionResult<IEnumerable<AmenityDTO>>> GetAmenities()
         {
             return await _amenities.GetAllAmenities();
         }
@@ -47,16 +62,16 @@ namespace AsyncInn.Controllers
         /// <returns>Returns a single Amenities object.</returns>
         // GET: api/Amenities/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Amenities>> GetAmenities(int id)
+        public async Task<ActionResult<AmenityDTO>> GetAmenities(int id)
         {
-            var amenities = await _amenities.GetAmenitiesByID(id);
+            var result = await _amenities.GetAmenitiesByID(id);
 
-            if (amenities == null)
+            if (result == null)
             {
                 return NotFound();
             }
 
-            return amenities;
+            return result;
         }
 
         /// <summary>
@@ -65,8 +80,8 @@ namespace AsyncInn.Controllers
         /// <param name="id">The ID of the Amenities object to update.</param>
         /// <param name="amenities">The updated information for the Amenities object.</param>
         /// <returns>Nothing.</returns>
-        // PUT: api/Amenities/5
-        [HttpPut("{id}")]
+        // PUT: api/Amenities/update/5
+        [HttpPut, Route("update/{id}")]
         public async Task<IActionResult> PutAmenities(int id, Amenities amenities)
         {
             if (id != amenities.ID)
@@ -74,23 +89,9 @@ namespace AsyncInn.Controllers
                 return BadRequest();
             }
 
-            await _amenities.UpdateAmenities(id, amenities);
+            await _amenities.UpdateAmenities(amenities);
 
             return NoContent();
-        }
-
-        /// <summary>
-        /// Adds a new Amenities object to the Amenities table / entity.
-        /// </summary>
-        /// <param name="amenities">The Amenities object to insert into the table.</param>
-        /// <returns>The newly created Amenities object.</returns>
-        // POST: api/Amenities
-        [HttpPost]
-        public async Task<ActionResult<Amenities>> PostAmenities(Amenities amenities)
-        {
-            var result = await _amenities.CreateAmenities(amenities);
-
-            return CreatedAtAction("GetAmenities", new { id = result.ID }, result);
         }
 
         /// <summary>
@@ -98,13 +99,39 @@ namespace AsyncInn.Controllers
         /// </summary>
         /// <param name="id">The ID of the Amenities object to delete.</param>
         /// <returns>Nothing.</returns>
-        // DELETE: api/Amenities/5
-        [HttpDelete("{id}")]
+        // DELETE: api/Amenities/remove/5
+        [HttpDelete, Route("remove/{id}")]
         public async Task<ActionResult<Amenities>> DeleteAmenities(int id)
         {
-            await _amenities.RemoveAmenities(id);
+            if (! await AmenitiesExists(id))
+            {
+                return NotFound();
+            }
+            else
+            {
+                await _amenities.RemoveAmenities(id);
 
-            return NoContent();
+                return NoContent();
+            }
+        }
+
+        /// <summary>
+        /// Checks to see if a given Amenities object exists in the DB.
+        /// </summary>
+        /// <param name="id">The ID of the given Amenities object.</param>
+        /// <returns>A boolean determined by whether the object exists or not.</returns>
+        private async Task<bool> AmenitiesExists(int id)
+        {
+            AmenityDTO result = await _amenities.GetAmenitiesByID(id);
+
+            if (result != null)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }

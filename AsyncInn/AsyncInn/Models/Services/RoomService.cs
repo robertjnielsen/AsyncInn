@@ -1,4 +1,5 @@
 ﻿using AsyncInn.Data;
+using AsyncInn.Models.DTO;
 using AsyncInn.Models.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -51,9 +52,22 @@ namespace AsyncInn.Models.Services
         /// Retrieves all Room objects from the DB.
         /// </summary>
         /// <returns>A list of all Room objects.</returns>
-        public async Task<List<Room>> GetAllRooms()
+        public async Task<List<RoomDTO>> GetAllRooms()
         {
-            return await _context.Rooms.ToListAsync();
+            // Retrieve all Room objects from the DB.
+            var result = await _context.Rooms.ToListAsync();
+
+            // Create a new list to hold the converted RoomDTO objects.
+            List<RoomDTO> rooms = new List<RoomDTO>();
+
+            // Enumarate through result and convert each Room object to a RoomDTO object, and add to the new list.
+            foreach (var room in result)
+            {
+                RoomDTO roomDTO = ConvertRoomToRoomDTO(room);
+                rooms.Add(roomDTO);
+            }
+
+            return rooms;
         }
 
         /// <summary>
@@ -61,20 +75,35 @@ namespace AsyncInn.Models.Services
         /// </summary>
         /// <param name="roomID">The ID of the Room object to retrieve.</param>
         /// <returns>A single Room object.</returns>
-        public async Task<Room> GetRoomByID(int roomID)
+        public async Task<RoomDTO> GetRoomByID(int roomID)
         {
             // Finds the Room object in the DB with a matching ID.
             Room result = await _context.Rooms.FindAsync(roomID);
-            Room room = new Room()
-            {
-                ID = result.ID,
-                Name = result.Name,
-                Layout = result.Layout
-            };
 
-            room.RoomAmenities = await GetRoomAmenities(roomID);
+            // Retrieve all Amenities associated with the Room object.
+            var roomAmenities = await GetAmenitiesByRoomID(roomID);
 
-            return room;
+            // Convert the Room object to a RoomDTO object.
+            RoomDTO roomDTO = ConvertRoomToRoomDTO(result);
+
+            // Assign the roomAmenities to the RoomDTO.
+            roomDTO.Amenities = roomAmenities;
+
+            return roomDTO;
+        }
+
+        /// <summary>
+        /// Update an existing Room object in the DB.
+        /// </summary>
+        /// <param name="room">The updated data for the Room object.</param>
+        /// <returns>Nothing.</returns>
+        public async Task UpdateRoom(Room room)
+        {
+            // Modify the data in the existing Room object in the DB.
+            _context.Update(room);
+
+            // Save the state of the DB.
+            await _context.SaveChangesAsync();
         }
 
         /// <summary>
@@ -85,35 +114,51 @@ namespace AsyncInn.Models.Services
         public async Task RemoveRoom(int roomID)
         {
             // Find the Room with the matching ID.
-            Room room = await GetRoomByID(roomID);
+            var room = _context.Rooms.FindAsync(roomID);
 
             // Delete the Hotel from the DB.
-            _context.Rooms.Remove(room);
+            _context.Remove(room);
 
             // Save the state of the DB.
             await _context.SaveChangesAsync();
         }
 
         /// <summary>
-        /// Update an existing Room object in the DB.
+        /// Retrieves all Amenities objects associated to a Room object.
         /// </summary>
-        /// <param name="roomID">The ID of the Room object to update.</param>
-        /// <param name="room">The updated data for the Room object.</param>
-        /// <returns>Nothing.</returns>
-        public async Task UpdateRoom(int roomID, Room room)
+        /// <param name="roomID">The ID of the given Room object.</param>
+        /// <returns>A list of Amenities.</returns>
+        public async Task<List<AmenityDTO>> GetAmenitiesByRoomID(int roomID)
         {
-            // Modify the data in the existing Room object in the DB.
-            _context.Entry(room).State = EntityState.Modified;
+            // Retrieve all RoomAmenities associated with the given Room object.
+            var result = await _context.RoomAmenities.Where(x => x.RoomID == roomID).ToListAsync();
 
-            // Save the state of the DB.
-            await _context.SaveChangesAsync();
+            // Create a new List to hold the Amenities.
+            List<AmenityDTO> amenities = new List<AmenityDTO>();
+
+            // Enumerate through the result and add the Amenities to the AmeinityDTO list.
+            foreach (var amenity in result)
+            {
+                AmenityDTO amenityDTO = await _amenities.GetAmenitiesByID(amenity.AmenitiesID);
+                amenities.Add(amenityDTO);
+            }
+
+            return amenities;
         }
 
-        public async Task<List<RoomAmenities>> GetRoomAmenities(int id)
+        /// <summary>
+        /// Converts a Room object to a RoomDTO object.
+        /// </summary>
+        /// <param name="room">The Room object to be converted.</param>
+        /// <returns>The newly converted RoomDTO object.</returns>
+        public RoomDTO ConvertRoomToRoomDTO(Room room)
         {
-            var result = await _context.RoomAmenities.Where(x => x.RoomID == id)
-                                        .Include(x => x.Amenities)
-                                        .ToListAsync();
+            RoomDTO result = new RoomDTO()
+            {
+                ID = room.ID,
+                Name = room.Name,
+                Layout = room.Layout.ToString()
+            };
 
             return result;
         }

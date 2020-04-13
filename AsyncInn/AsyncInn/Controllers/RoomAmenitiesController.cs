@@ -14,94 +14,46 @@ namespace AsyncInn.Controllers
     [ApiController]
     public class RoomAmenitiesController : ControllerBase
     {
+        /// <summary>
+        /// The DBContext.
+        /// </summary>
         private readonly AsyncInnDbContext _context;
 
+        /// <summary>
+        /// Constructor method to inject the DBContext.
+        /// </summary>
+        /// <param name="context">The DBContext.</param>
         public RoomAmenitiesController(AsyncInnDbContext context)
         {
             _context = context;
         }
 
-        // GET: api/RoomAmenities
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<RoomAmenities>>> GetRoomAmenities()
-        {
-            return await _context.RoomAmenities.ToListAsync();
-        }
-
-        // GET: api/RoomAmenities/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<RoomAmenities>> GetRoomAmenities(int id)
-        {
-            var roomAmenities = await _context.RoomAmenities.FindAsync(id);
-
-            if (roomAmenities == null)
-            {
-                return NotFound();
-            }
-
-            return roomAmenities;
-        }
-
-        // PUT: api/RoomAmenities/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
-        // more details see https://aka.ms/RazorPagesCRUD.
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutRoomAmenities(int id, RoomAmenities roomAmenities)
-        {
-            if (id != roomAmenities.RoomID)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(roomAmenities).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!RoomAmenitiesExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
-        // POST: api/RoomAmenities
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
-        // more details see https://aka.ms/RazorPagesCRUD.
-        [HttpPost]
+        /// <summary>
+        /// Creates and inserts a new RoomAmenities object into the DB.
+        /// </summary>
+        /// <param name="roomAmenities">The data for the new RoomAmenities object.</param>
+        /// <returns>The newly inserted RoomAmenities object.</returns>
+        // POST: api/RoomAmenities/new/5/5
+        [HttpPost, Route("new/{roomID}/{amenitiesID}")]
         public async Task<ActionResult<RoomAmenities>> PostRoomAmenities(RoomAmenities roomAmenities)
         {
+            // Add the new RoomAmenities object to the DB.
             _context.RoomAmenities.Add(roomAmenities);
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateException)
-            {
-                if (RoomAmenitiesExists(roomAmenities.RoomID))
-                {
-                    return Conflict();
-                }
-                else
-                {
-                    throw;
-                }
-            }
 
+            // Save the state of the DB.
+            await _context.SaveChangesAsync();
+
+            // Return the new RoomAmenities object.
             return CreatedAtAction("GetRoomAmenities", new { id = roomAmenities.RoomID }, roomAmenities);
         }
 
-        // DELETE: api/RoomAmenities/5
-        [HttpDelete("{id}")]
+        /// <summary>
+        /// Deletes a RoomAmenities object from the DB.
+        /// </summary>
+        /// <param name="id">The ID of the RoomAmenities object to delete.</param>
+        /// <returns>Nothing.</returns>
+        // DELETE: api/RoomAmenities/remove/5/5
+        [HttpDelete, Route("remove/{roomID}/{amenitiesID}")]
         public async Task<ActionResult<RoomAmenities>> DeleteRoomAmenities(int id)
         {
             var roomAmenities = await _context.RoomAmenities.FindAsync(id);
@@ -113,12 +65,7 @@ namespace AsyncInn.Controllers
             _context.RoomAmenities.Remove(roomAmenities);
             await _context.SaveChangesAsync();
 
-            return roomAmenities;
-        }
-
-        private bool RoomAmenitiesExists(int id)
-        {
-            return _context.RoomAmenities.Any(e => e.RoomID == id);
+            return NoContent();
         }
     }
 }

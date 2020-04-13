@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AsyncInn.Models.DTO;
 
 namespace AsyncInn.Models.Services
 {
@@ -15,13 +16,16 @@ namespace AsyncInn.Models.Services
         /// </summary>
         private AsyncInnDbContext _context;
 
+        private IHotelRoomManager _hotelRooms;
+
         /// <summary>
         /// Constructor method for the service.
         /// </summary>
         /// <param name="context">The DBContext for the AsyncInn DB.</param>
-        public HotelService(AsyncInnDbContext context)
+        public HotelService(AsyncInnDbContext context, IHotelRoomManager hotelRooms)
         {
             _context = context;
+            _hotelRooms = hotelRooms;
         }
 
         /// <summary>
@@ -44,9 +48,22 @@ namespace AsyncInn.Models.Services
         /// Retrieves all Hotel objects from the DB.
         /// </summary>
         /// <returns>A list of all Hotel objects.</returns>
-        public async Task<List<Hotel>> GetAllHotels()
+        public async Task<List<HotelDTO>> GetAllHotels()
         {
-            return await _context.Hotels.ToListAsync();
+            // Retrieve all Hotel objects from the DB.
+            List<Hotel> hotels = await _context.Hotels.ToListAsync();
+
+            // Create a new List to contain the converted HotelDTO objects.
+            List<HotelDTO> result = new List<HotelDTO>();
+
+            // Enumerate through the Hotel objects, convert them to HotelDTO objects, add them to the newly created HotelDTO list.
+            foreach (var hotel in hotels)
+            {
+                HotelDTO hotelDTO = ConvertHotelToHotelDTO(hotel);
+                result.Add(hotelDTO);
+            }
+
+            return result;
         }
 
         /// <summary>
@@ -54,55 +71,93 @@ namespace AsyncInn.Models.Services
         /// </summary>
         /// <param name="HotelID">The ID of the Hotel object to retrieve.</param>
         /// <returns>A single Hotel object.</returns>
-        public async Task<Hotel> GetHotelByID(int HotelID)
+        public async Task<HotelDTO> GetHotelByID(int hotelID)
         {
             // Finds the Hotel object in the DB with a matching ID.
-            Hotel hotel = await _context.Hotels.FindAsync(HotelID);
-            hotel.HotelRooms = await GetHotelRooms(HotelID);
+            Hotel hotel = await _context.Hotels.FindAsync(hotelID);
 
-            return hotel;
-        }
+            // Converts the Hotel object to a HotelDTO object.
+            HotelDTO hotelDTO = ConvertHotelToHotelDTO(hotel);
 
-        /// <summary>
-        /// Deletes a Hotel object from the DB.
-        /// </summary>
-        /// <param name="HotelID">The ID of the Hotel object to delete.</param>
-        /// <returns>Nothing.</returns>
-        public async Task RemoveHotel(int HotelID)
-        {
-            // Find the Hotel with the matching ID.
-            Hotel hotel = await GetHotelByID(HotelID);
+            // Retrieves all HotelRoom objects associated with the Hotel object.
+            hotelDTO.Rooms = await GetHotelRoomsByHotelID(hotelID);
 
-            // Delete the Hotel from the DB.
-            _context.Hotels.Remove(hotel);
-
-            // Save the state of the DB.
-            await _context.SaveChangesAsync();
+            return hotelDTO;
         }
 
         /// <summary>
         /// Update an existing Hotel object in the DB.
         /// </summary>
-        /// <param name="HotelID">The ID of the Hotel object to update.</param>
         /// <param name="hotel">The updated data for the Hotel object.</param>
         /// <returns>Nothing.</returns>
-        public async Task UpdateHotel(int HotelID, Hotel hotel)
+        public async Task UpdateHotel(Hotel hotel)
         {
             // Modify the data in the existing Hotel object in the DB.
-            _context.Entry(hotel).State = EntityState.Modified;
+            _context.Update(hotel);
 
             // Save the state of the DB.
             await _context.SaveChangesAsync();
         }
-        public async Task<List<HotelRoom>> GetHotelRooms(int HotelID)
+
+        /// <summary>
+        /// Deletes a Hotel object from the DB.
+        /// </summary>
+        /// <param name="hotelID">The ID of the Hotel object to delete.</param>
+        /// <returns>Nothing.</returns>
+        public async Task RemoveHotel(int hotelID)
         {
-            var Result = await _context.HotelRooms.Where(x => x.HotelID == HotelID)
-                                                  .Include(x => x.Room)
-                                                  .ThenInclude(x => x.RoomAmenities)
-                                                  .ThenInclude(x => x.Amenities)
-                                                  .ToListAsync();
-            return Result;
+            // Find the Hotel with the matching ID.
+            var hotel = _context.Hotels.FindAsync(hotelID);
+
+            // Delete the Hotel from the DB.
+            _context.Remove(hotel);
+
+            // Save the state of the DB.
+            await _context.SaveChangesAsync();
+        }
+
+        /// <summary>
+        /// Retrieves a list of HotelRoom objects for a given Hotel object.
+        /// </summary>
+        /// <param name="hotelID">The ID of the given Hotel object.</param>
+        /// <returns>A list of HotelRoom objects.</returns>
+        public async Task<List<HotelRoomDTO>> GetHotelRoomsByHotelID(int hotelID)
+        {
+            // Grab a list of all HotelRoom objects that match the given Hotel object ID.
+            var result = await _context.HotelRooms.Where(x => x.HotelID == hotelID).ToListAsync();
+
+            // Create a new List to hold the HotelRoomDTO objects.
+            List<HotelRoomDTO> hotelRooms = new List<HotelRoomDTO>();
+
+            foreach (var hotelRoom in result)
+            {
+                HotelRoomDTO room = await _hotelRooms.GetHotelRoomByRoomNumber(hotelRoom.HotelID, hotelRoom.RoomNumber);
+                hotelRooms.Add(room);
+
+            }
+
+            return hotelRooms;
                 
+        }
+
+        /// <summary>
+        /// Converts a Hotel object from the DB to a HotelDTO object.
+        /// </summary>
+        /// <param name="hotel">The Hotel object to be converted.</param>
+        /// <returns>The newly converted HotelDTO object.</returns>
+        public HotelDTO ConvertHotelToHotelDTO(Hotel hotel)
+        {
+            HotelDTO hotelDTO = new HotelDTO()
+            {
+                ID = hotel.ID,
+                Name = hotel.Name,
+                StreetAddress = hotel.StreetAddress,
+                City = hotel.City,
+                State = hotel.State,
+                Phone = hotel.Phone
+            };
+
+            return hotelDTO;
         }
     }
 }
