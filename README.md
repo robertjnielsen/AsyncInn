@@ -81,6 +81,13 @@ dotnet run
 
 ## Change Log
 
+**1.9** - 20200412
+- Completed CRUD operations for Rooms with DTOs.
+
+**1.8** - 20200412
+- Completed CRUD operations for Hotels with DTOs.
+- Created DTOs for Models.
+
 **1.7** - 20200409
 - Tested data with Postman to make API calls.
 - Created interface and service for HotelRooms.
