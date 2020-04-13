@@ -46,36 +46,20 @@ namespace AsyncInn.Controllers
         // PUT: api/HotelRooms/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
-/*        [HttpPut("{id}")]
-        public async Task<IActionResult> PutHotelRoom(int id, HotelRoom hotelRoom)
+        [HttpPut("{roomNumber}")]
+        public async Task<IActionResult> PutHotelRoom(int roomNumber, HotelRoom hotelRoom)
         {
-            if (id != hotelRoom.HotelID)
+            if (roomNumber != hotelRoom.RoomNumber)
             {
                 return BadRequest();
             }
 
-            _context.Entry(hotelRoom).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!HotelRoomExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            await _context.UpdateHotelRoom(roomNumber, hotelRoom);
 
             return NoContent();
         }
 
-*/        // POST: api/HotelRooms
+        // POST: api/HotelRooms
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPost]
@@ -87,20 +71,13 @@ namespace AsyncInn.Controllers
         }
 
         // DELETE: api/HotelRooms/5
-/*        [HttpDelete("{id}")]
+        [HttpDelete("{id}")]
         public async Task<ActionResult<HotelRoom>> DeleteHotelRoom(int id)
         {
-            var hotelRoom = await _context.HotelRooms.FindAsync(id);
-            if (hotelRoom == null)
-            {
-                return NotFound();
-            }
+            await _context.RemoveHotelRoom(id);
 
-            _context.HotelRooms.Remove(hotelRoom);
-            await _context.SaveChangesAsync();
-
-            return hotelRoom;
+            return NoContent();
         }
-*/
+
     }
 }
