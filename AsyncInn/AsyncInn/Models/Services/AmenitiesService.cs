@@ -1,4 +1,5 @@
 ﻿using AsyncInn.Data;
+using AsyncInn.Models.DTO;
 using AsyncInn.Models.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -31,10 +32,10 @@ namespace AsyncInn.Models.Services
         /// <returns>The newly created Amenities object.</returns>
         public async Task<Amenities> CreateAmenities(Amenities amenities)
         {
-            // Adds the new Room to the DB.
+            // Add the Amenities object to the DB.
             _context.Amenities.Add(amenities);
-
-            // Saves the new Room in the DB.
+            
+            // Save the state of the DB.
             await _context.SaveChangesAsync();
 
             return amenities;
@@ -44,33 +45,62 @@ namespace AsyncInn.Models.Services
         /// Retrieves all Amenities objects from the DB.
         /// </summary>
         /// <returns>A list of all Amenities objects.</returns>
-        public async Task<List<Amenities>> GetAllAmenities()
+        public async Task<List<AmenityDTO>> GetAllAmenities()
         {
-            return await _context.Amenities.ToListAsync();
-        }
+            // Grab all Amenities objects from the DB.
+            var result = await _context.Amenities.ToListAsync();
 
-        /// <summary>
-        /// Retrieves a single Amenities object from the DB.
-        /// </summary>
-        /// <param name="AmenitiesID">The ID of the Amenities object to retrieve.</param>
-        /// <returns>A single Amenities object.</returns>
-        public async Task<Amenities> GetAmenitiesByID(int AmenitiesID)
-        {
-            // Finds the Room object in the DB with a matching ID.
-            Amenities amenities = await _context.Amenities.FindAsync(AmenitiesID);
+            List<AmenityDTO> amenities = new List<AmenityDTO>();
+
+            // Enumarate through the items in result and convert them to AmenityDTO objects, then add them to the list.
+            foreach (var amenity in result)
+            {
+                AmenityDTO amenityDTO = ConvertAmenitiesObjectToAmenityDTO(amenity);
+                amenities.Add(amenityDTO);
+            }
 
             return amenities;
         }
 
         /// <summary>
+        /// Retrieves a single Amenities object from the DB.
+        /// </summary>
+        /// <param name="amenitiesID">The ID of the Amenities object to retrieve.</param>
+        /// <returns>A single Amenities object.</returns>
+        public async Task<AmenityDTO> GetAmenitiesByID(int amenitiesID)
+        {
+            // Finds the Amenities object in the DB with a matching ID.
+            Amenities result = await _context.Amenities.FindAsync(amenitiesID);
+
+            // Convert the Amenities object to an AmenityDTO object.
+            AmenityDTO amenity = ConvertAmenitiesObjectToAmenityDTO(result);
+
+            return amenity;
+        }
+
+        /// <summary>
+        /// Update an existing Amenities object in the DB.
+        /// </summary>
+        /// <param name="amenities">The updated data for the Amenities object.</param>
+        /// <returns>Nothing.</returns>
+        public async Task UpdateAmenities(Amenities amenities)
+        {
+            // Modify the data in the existing Room object in the DB.
+            _context.Update(amenities);
+
+            // Save the state of the DB.
+            await _context.SaveChangesAsync();
+        }
+
+        /// <summary>
         /// Deletes an Amenities object from the DB.
         /// </summary>
-        /// <param name="AmenitiesID">The ID of the Amenities object to delete.</param>
+        /// <param name="amenitiesID">The ID of the Amenities object to delete.</param>
         /// <returns>Nothing.</returns>
-        public async Task RemoveAmenities(int AmenitiesID)
+        public async Task RemoveAmenities(int amenitiesID)
         {
             // Find the Room with the matching ID.
-            Amenities amenities = await GetAmenitiesByID(AmenitiesID);
+            Amenities amenities = await _context.Amenities.FindAsync(amenitiesID);
 
             // Delete the Hotel from the DB.
             _context.Amenities.Remove(amenities);
@@ -80,18 +110,19 @@ namespace AsyncInn.Models.Services
         }
 
         /// <summary>
-        /// Update an existing Amenities object in the DB.
+        /// Converts an Amenities object to an AmenityDTO object.
         /// </summary>
-        /// <param name="AmenitiesID">The ID of the Amenities object to update.</param>
-        /// <param name="amenities">The updated data for the Amenities object.</param>
-        /// <returns>Nothing.</returns>
-        public async Task UpdateAmenities(int AmenitiesID, Amenities amenities)
+        /// <param name="amenity">The Amenities object to convert.</param>
+        /// <returns>An AmenityDTO object.</returns>
+        public AmenityDTO ConvertAmenitiesObjectToAmenityDTO(Amenities amenity)
         {
-            // Modify the data in the existing Room object in the DB.
-            _context.Entry(amenities).State = EntityState.Modified;
+            AmenityDTO result = new AmenityDTO()
+            {
+                ID = amenity.ID,
+                Name = amenity.Name
+            };
 
-            // Save the state of the DB.
-            await _context.SaveChangesAsync();
+            return result;
         }
     }
 }
