@@ -131,7 +131,7 @@ namespace AsyncInn.Models.Services
 
             foreach (var hotelRoom in result)
             {
-                HotelRoomDTO room = await _hotelRooms.GetHotelRoomByRoomNumber(room.HotelID, hotelRoom.RoomNumber);
+                HotelRoomDTO room = await _hotelRooms.GetHotelRoomByRoomNumber(hotelRoom.HotelID, hotelRoom.RoomNumber);
                 hotelRooms.Add(room);
 
             }
