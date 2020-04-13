@@ -107,21 +107,10 @@ namespace AsyncInn.Models.Services
         public async Task RemoveHotel(int hotelID)
         {
             // Find the Hotel with the matching ID.
-            HotelDTO result = await GetHotelByID(hotelID);
-
-            // Convert HotelDTO to Hotel for removal from DB.
-            Hotel hotel = new Hotel()
-            {
-                ID = result.ID,
-                Name = result.Name,
-                StreetAddress = result.StreetAddress,
-                City = result.City,
-                State = result.State,
-                Phone = result.Phone
-            };
+            var hotel = _context.Hotels.FindAsync(hotelID);
 
             // Delete the Hotel from the DB.
-            _context.Hotels.Remove(hotel);
+            _context.Remove(hotel);
 
             // Save the state of the DB.
             await _context.SaveChangesAsync();
